@@ -1,0 +1,21 @@
+---
+
+version: "3"
+
+services:
+  ansible-supergiant-test:
+    container_name: supergiant-test-runner
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test.runner
+    depends_on:
+      - ubuntu-xenial-test-instance
+
+  ubuntu-xenial-test-instance:
+    container_name: ubuntu-xenial-test-instance
+    build:
+      context: .
+      dockerfile: Dockerfile.test.xenial
+
+networks:
+  default:

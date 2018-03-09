@@ -1,0 +1,15 @@
+FROM python:3
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+         sshpass \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install ansible
+
+WORKDIR /ansible-supergiant
+ADD . .
+
+WORKDIR /ansible-supergiant/tests
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+CMD ["ansible-playbook", "-i", "inventory.ini", "test.yml"]
