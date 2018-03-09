@@ -1,0 +1,70 @@
+---
+
+- name: validate mandatory variables
+  set_fact:
+    _validated: "{{ item | mandatory }}"
+  with_items:
+    - "{{ supergiant_admin_user_username }}"
+    - "{{ supergiant_admin_user_password }}"
+
+- name: install apt pre-requisites
+  become: yes
+  apt:
+    name: ca-certificates
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ supergiant_cache_valid_time }}"
+
+- name: create directories used in install locations
+  become: yes
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+  with_items:
+    - "{{ supergiant_server_install_location }}"
+    - "{{ supergiant_server_config_location }}"
+    - "{{ supergiant_server_database_location }}"
+    - "{{ supergiant_server_log_location }}"
+
+# FIXME: Only run this block if correct version is not already installed!
+- block:
+  - name: download Supergiant server
+    become: yes
+    get_url:
+      url: "{{ supergiant_server_download_location }}"
+      dest: "{{ supergiant_server_install_location }}"
+      mode: 0770
+      checksum: "{{ supergiant_server_download_checksum }}"
+    notify: restart-supergiant
+    when: supergiant_version_has_release
+
+  - name: build Supergiant
+    import_tasks: build-supergiant.yml
+    when: not supergiant_version_has_release
+
+- name: create server configuration file
+  become: yes
+  template:
+    src: config.json.j2
+    dest: "{{ supergiant_server_config_location }}"
+    mode: 0644
+  notify: restart-supergiant
+
+- name: create systemd configuration
+  become: yes
+  template:
+    src: supergiant.service.j2
+    dest: /etc/systemd/system/supergiant.service
+    mode: 0751
+  notify: restart-supergiant
+  when: supergiant_configure_systemctl
+
+- name: enable Supergiant server to start on boot
+  become: yes
+  service:
+    name: supergiant
+    enabled: yes
+  when: supergiant_configure_systemctl
+
+- pause:
+    minutes: 5

@@ -3,16 +3,18 @@
 version: "3"
 
 services:
-  ansible-supergiant-test:
+  supergiant-test-runner:
     container_name: supergiant-test-runner
     build:
       context: ../../
       dockerfile: tests/docker/Dockerfile.test.runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      - ubuntu-xenial-test-instance
+      - supergiant-ubuntu-xenial-test-instance
 
-  ubuntu-xenial-test-instance:
-    container_name: ubuntu-xenial-test-instance
+  supergiant-ubuntu-xenial-test-instance:
+    container_name: supergiant-ubuntu-xenial-test-instance
     build:
       context: .
       dockerfile: Dockerfile.test.xenial

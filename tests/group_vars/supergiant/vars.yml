@@ -1,0 +1,5 @@
+---
+
+supergiant_admin_user_username: admin
+# Note: Outside of testing, put this in a vault!
+supergiant_admin_user_password: admin

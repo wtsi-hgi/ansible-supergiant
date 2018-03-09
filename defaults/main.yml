@@ -1,0 +1,33 @@
+# Required variables:
+#   supergiant_admin_user_username
+#   supergiant_admin_user_password
+
+---
+
+supergiant_version: v1.0.0-beta.2
+
+# TODO: should be able to determine this...
+supergiant_version_has_release: false
+
+supergiant_git_repository: "https://github.com/supergiant/supergiant.git"
+
+supergiant_server_download_location: "https://github.com/supergiant/supergiant/releases/download/{{ supergiant_version }}/supergiant-api-linux-amd64"
+supergiant_server_download_checksum: "{{ supergiant_download_checksums[supergiant_server_download_location] }}"
+supergiant_server_install_location: /usr/bin/supergiant
+
+
+supergiant_server_config_location: /etc/supergiant/config.json
+supergiant_server_database_location: /var/lib/supergiant/production.db
+supergiant_server_log_location: /var/lib/supergiant/production.log
+
+supergiant_ui_enabled: true
+supergiant_capacity_service_enabled: true
+supergiant_host: localhost
+supergiant_port: 8080
+supergiant_log_level: debug
+supergiant_node_sizes: "{{ supergiant_standard_node_sizes }}"
+
+supergiant_cache_valid_time: 3600
+supergiant_configure_systemctl: true
+
+supergiant_support_user_password: "{{ supergiant_admin_user_password | password_hash('sha256', 'supergiant') }}"

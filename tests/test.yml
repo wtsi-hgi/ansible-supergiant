@@ -2,4 +2,7 @@
 
 - hosts: test-machines
   roles:
-    - supergiant
+    - name: supergiant
+      vars:
+        supergiant_configure_systemctl: false
+

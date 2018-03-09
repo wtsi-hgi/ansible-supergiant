@@ -1,0 +1,17 @@
+---
+
+- name: restart Supergiant server
+  become: yes
+  service:
+    name: supergiant
+    state: restarted
+  listen: restart-supergiant
+  when: supergiant_configure_systemctl
+
+- name: reload Supergiant server
+  become: yes
+  service:
+    name: supergiant
+    state: reloaded
+  listen: reload-supergiant
+  when: supergiant_configure_systemctl

@@ -2,10 +2,29 @@ FROM python:3
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-         sshpass \
+        sshpass \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install ansible
+RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add - \
+    && add-apt-repository \
+           "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+           $(lsb_release -cs) \
+           stable" \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install \
+        docker-ce \
+    && apt-get autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# TODO: Change to use requirements.txt
+RUN pip --disable-pip-version-check install \
+    ansible \
+    docker-py
 
 WORKDIR /ansible-supergiant
 ADD . .

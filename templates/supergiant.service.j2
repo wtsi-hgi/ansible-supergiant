@@ -1,0 +1,9 @@
+[Unit]
+Description=Supergiant Server
+After=syslog.target
+After=network.target
+[Service]
+ExecStart={{ supergiant_server_install_location }} --config-file {{ supergiant_server_config_location }}
+Restart=on-abort
+[Install]
+WantedBy=multi-user.target

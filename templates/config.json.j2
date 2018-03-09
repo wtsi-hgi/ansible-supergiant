@@ -1,0 +1,11 @@
+{
+  "sqlite_file": "{{ supergiant_server_database_location }}",
+  "ui_enabled": {{ supergiant_ui_enabled | to_json }},
+  "capacity_service_enabled": {{ supergiant_capacity_service_enabled | to_json }},
+  "publish_host": "{{ supergiant_host }}",
+  "http_port": "{{ supergiant_port }}",
+  "log_file": "{{ supergiant_server_log_location }}",
+  "log_level": "{{ supergiant_log_level }}",
+  "node_sizes": {{ supergiant_node_sizes | to_json }},
+  "support_password": "{{ supergiant_support_user_password }}"
+}
