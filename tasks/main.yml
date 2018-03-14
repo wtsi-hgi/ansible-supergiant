@@ -25,22 +25,55 @@
     - "{{ supergiant_server_config_location }}"
     - "{{ supergiant_server_database_location }}"
     - "{{ supergiant_server_log_location }}"
+    - "{{ supergiant_server_version_location }}"
 
-# FIXME: Only run this block if correct version is not already installed!
-- block:
-  - name: download Supergiant server
-    become: yes
-    get_url:
-      url: "{{ supergiant_server_download_location }}"
-      dest: "{{ supergiant_server_install_location }}"
-      mode: 0770
-      checksum: "{{ supergiant_server_download_checksum }}"
-    notify: restart-supergiant
-    when: supergiant_version_has_release
+- name: touch server version location to ensure that it exists
+  become: yes
+  file:
+    path: "{{ supergiant_server_version_location }}"
+    state: touch
 
-  - name: build Supergiant
-    import_tasks: build-supergiant.yml
-    when: not supergiant_version_has_release
+- name: check version of Supergiant already installed
+  become: yes
+  slurp:
+    src: "{{ supergiant_server_version_location }}"
+  register: server_version
+
+- name: install Supergiant
+  when: server_version.content | b64decode != supergiant_version
+  block:
+    - name: check if release exists for Supergiant version
+      uri:
+        url: "{{ supergiant_server_release_location }}"
+        follow_redirects: all
+        method: HEAD
+        status_code: 200, 404
+      register: release_check_results
+      changed_when: false
+
+    - name: set release check results
+      set_fact:
+        released: "{{release_check_results.status == 200 }}"
+
+    - name: install Supergiant from downloaded release
+      become: yes
+      get_url:
+        url: "{{ supergiant_server_release_location }}"
+        dest: "{{ supergiant_server_install_location }}"
+        mode: 0770
+        checksum: "{{ supergiant_server_release_checksum }}"
+      notify: restart-supergiant
+      when: released
+
+    - name: install Supergiant from build
+      import_tasks: build-and-install.yml
+      when: not released
+
+    - name: record installed version of Supergiant
+      become: yes
+      copy:
+        content: "{{ supergiant_version }}"
+        dest: "{{ supergiant_server_version_location }}"
 
 - name: create server configuration file
   become: yes
@@ -65,6 +98,3 @@
     name: supergiant
     enabled: yes
   when: supergiant_configure_systemctl
-
-- pause:
-    minutes: 5

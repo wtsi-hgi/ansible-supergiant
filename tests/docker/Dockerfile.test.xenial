@@ -4,6 +4,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          openssh-server \
          python \
+         python-pip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sed -ri "s/^PermitRootLogin\s+.*/PermitRootLogin yes/" /etc/ssh/sshd_config \
@@ -11,9 +12,12 @@ RUN sed -ri "s/^PermitRootLogin\s+.*/PermitRootLogin yes/" /etc/ssh/sshd_config 
 
 RUN mkdir /var/run/sshd
 
+ARG root_password=root
+RUN echo "root:${root_password}" | chpasswd
+
+RUN pip install --disable-pip-version-check \
+    requests
+
 EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D"]
-
-ARG root_password=root
-RUN echo "root:${root_password}" | chpasswd

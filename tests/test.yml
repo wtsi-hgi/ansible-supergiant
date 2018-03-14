@@ -3,6 +3,16 @@
 - hosts: test-machines
   roles:
     - name: supergiant
-      vars:
-        supergiant_configure_systemctl: false
+  vars:
+     supergiant_version: 2bd4e007597c4e00ad676854518add3efc364f98
 
+- hosts: test-machines
+  tasks:
+    - name: run Supergiant tests
+      test_supergiant:
+        executable: "{{ supergiant_server_install_location }}"
+        config: "{{ supergiant_server_config_location }}"
+        host: "{{ supergiant_host }}"
+        port: "{{ supergiant_port }}"
+
+# TODO: Test more configurations!
