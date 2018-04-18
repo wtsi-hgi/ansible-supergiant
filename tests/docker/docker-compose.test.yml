@@ -10,7 +10,7 @@ services:
       dockerfile: tests/docker/Dockerfile.test.runner
     depends_on:
       - supergiant-0-15-6-ubuntu-xenial-test-instance
-      - supergiant-1-0-0-beta2-ubuntu-xenial-test-instance
+      - supergiant-1-0-0-beta3-ubuntu-xenial-test-instance
 
   supergiant-0-15-6-ubuntu-xenial-test-instance:
     container_name: supergiant-0-15-6-ubuntu-xenial-test-instance
@@ -18,8 +18,8 @@ services:
       context: .
       dockerfile: Dockerfile.test.xenial
 
-  supergiant-1-0-0-beta2-ubuntu-xenial-test-instance:
-    container_name: supergiant-1-0-0-beta2-ubuntu-xenial-test-instance
+  supergiant-1-0-0-beta3-ubuntu-xenial-test-instance:
+    container_name: supergiant-1-0-0-beta3-ubuntu-xenial-test-instance
     build:
       context: .
       dockerfile: Dockerfile.test.xenial
