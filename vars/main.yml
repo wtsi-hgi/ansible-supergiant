@@ -3,6 +3,7 @@
 supergiant_download_checksums:
   https://github.com/supergiant/supergiant/releases/download/v0.15.6/supergiant-server-linux-amd64: sha256:59e2a3faa31920dd6de3c88b450c336ff52833bf9cca1be6c391e4f65dde7204
   https://github.com/supergiant/supergiant/releases/download/v1.0.0-beta.2/supergiant-api-linux-amd64: sha256:0002136409f5e498b51cbd861c37bf25da6c1c1c1ba44ff7d3cdbad2dd8bb476
+  https://github.com/supergiant/supergiant/releases/download/v1.0.0-beta.3/supergiant-api-linux-amd64: sha256:2d6e713aac2b033799d4cbd3fa5f94beae9073eb0378b1d8d44896960a1ca9fa
 
 supergiant_aws_node_sizes: [
   {"name": "t2.nano", "ram_gib": 0.5, "cpu_cores": 1},

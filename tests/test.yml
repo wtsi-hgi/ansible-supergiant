@@ -3,13 +3,11 @@
 - hosts: test-machines
   roles:
     - name: supergiant
-  vars:
-     supergiant_version: 2bd4e007597c4e00ad676854518add3efc364f98
 
 - hosts: test-machines
   tasks:
-    - name: run Supergiant tests
-      test_supergiant:
+     - name: run Supergiant tests
+       test_supergiant:
         executable: "{{ supergiant_server_install_location }}"
         config: "{{ supergiant_server_config_location }}"
         host: "{{ supergiant_host }}"

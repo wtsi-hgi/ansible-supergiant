@@ -1,8 +1,9 @@
 ---
 
 - name: validate mandatory variables
-  set_fact:
-    _validated: "{{ item | mandatory }}"
+  no_log: true
+  assert:
+    that: item | mandatory
   with_items:
     - "{{ supergiant_admin_user_username }}"
     - "{{ supergiant_admin_user_password }}"
@@ -27,53 +28,23 @@
     - "{{ supergiant_server_log_location }}"
     - "{{ supergiant_server_version_location }}"
 
-- name: touch server version location to ensure that it exists
+- name: checksum Supergiant
+  stat:
+    path: "{{ supergiant_server_install_location }}"
+    checksum_algorithm: "{{ supergiant_server_release_checksum.split(':')[0] }}"
+    get_mime: no
+    get_attributes: no
+  register: supergiant_checksum
+
+- name: install Supergiant from downloaded release
   become: yes
-  file:
-    path: "{{ supergiant_server_version_location }}"
-    state: touch
-
-- name: check version of Supergiant already installed
-  become: yes
-  slurp:
-    src: "{{ supergiant_server_version_location }}"
-  register: server_version
-
-- name: install Supergiant
-  when: server_version.content | b64decode != supergiant_version
-  block:
-    - name: check if release exists for Supergiant version
-      uri:
-        url: "{{ supergiant_server_release_location }}"
-        follow_redirects: all
-        method: HEAD
-        status_code: 200, 404
-      register: release_check_results
-      changed_when: false
-
-    - name: set release check results
-      set_fact:
-        released: "{{release_check_results.status == 200 }}"
-
-    - name: install Supergiant from downloaded release
-      become: yes
-      get_url:
-        url: "{{ supergiant_server_release_location }}"
-        dest: "{{ supergiant_server_install_location }}"
-        mode: 0770
-        checksum: "{{ supergiant_server_release_checksum }}"
-      notify: restart-supergiant
-      when: released
-
-    - name: install Supergiant from build
-      import_tasks: build-and-install.yml
-      when: not released
-
-    - name: record installed version of Supergiant
-      become: yes
-      copy:
-        content: "{{ supergiant_version }}"
-        dest: "{{ supergiant_server_version_location }}"
+  get_url:
+    url: "{{ supergiant_server_release_location }}"
+    dest: "{{ supergiant_server_install_location }}"
+    mode: 0770
+    checksum: "{{ supergiant_server_release_checksum }}"
+  notify: restart-supergiant
+  when: not supergiant_checksum.stat.exists or supergiant_checksum.stat.checksum == supergiant_server_release_checksum.split(':')[1]
 
 - name: create server configuration file
   become: yes

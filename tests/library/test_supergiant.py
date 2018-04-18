@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 
 import requests
 
@@ -10,6 +10,8 @@ SERVER_EXECUTABLE_LOCATION_PARAMETER_NAME = "executable"
 SERVER_CONFIGURATION_LOCATION_PARAMETER_NAME = "config"
 SERVER_HOST_PARAMETER_NAME = "host"
 SERVER_PORT_PARAMETER_NAME = "port"
+
+STARTUP_TIMEOUT = 30.0
 
 _SUPERGIANT_CONFIG_FILE_LONG_PARAMETER_NAME = "--config-file"
 _SUPERGIANT_STARTED_INDICATOR = "Writing log to "

@@ -10,7 +10,7 @@ supergiant_git_repository: https://github.com/supergiant/supergiant.git
 supergiant_server_release_location: "https://github.com/supergiant/supergiant/releases/download/{{ supergiant_version }}/supergiant-api-linux-amd64"
 supergiant_server_release_checksum: "{{ supergiant_download_checksums[supergiant_server_release_location] }}"
 
-supergiant_server_install_location: /usr/bin/supergiant
+supergiant_server_install_location: /opt/supergiant
 supergiant_server_config_location: /etc/supergiant/config.json
 supergiant_server_database_location: /var/lib/supergiant/production.db
 supergiant_server_log_location: /var/lib/supergiant/production.log
@@ -27,5 +27,3 @@ supergiant_cache_valid_time: 3600
 supergiant_configure_systemctl: true
 
 supergiant_support_user_password: "{{ (supergiant_admin_user_password | password_hash('sha256', 'supergiant'))[:32] }}"
-
-supergiant_docker_build_temp_directory: /tmp

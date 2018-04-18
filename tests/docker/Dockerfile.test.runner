@@ -1,5 +1,7 @@
 FROM python:3
 
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         sshpass \
@@ -21,14 +23,10 @@ RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID"
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# TODO: Change to use requirements.txt
-RUN pip --disable-pip-version-check install \
-    ansible \
-    docker-py
-
 WORKDIR /ansible-supergiant
+ADD tests/runner-requirements.txt tests/runner-requirements.txt
+RUN pip --disable-pip-version-check install -r tests/runner-requirements.txt
 ADD . .
 
 WORKDIR /ansible-supergiant/tests
-ENV ANSIBLE_HOST_KEY_CHECKING=False
 CMD ["ansible-playbook", "-i", "inventory.ini", "test.yml"]

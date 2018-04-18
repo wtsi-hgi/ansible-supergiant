@@ -4,6 +4,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          openssh-server \
          python \
+         python-setuptools \
          python-pip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,7 +17,8 @@ ARG root_password=root
 RUN echo "root:${root_password}" | chpasswd
 
 RUN pip install --disable-pip-version-check \
-    requests
+    requests \
+    timeout-decorator
 
 EXPOSE 22
 
